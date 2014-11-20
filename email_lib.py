@@ -119,11 +119,13 @@ def get_decoded_email_body(message_body):
     text = ""
     html = None
 
+    # Check to see if email is multipart
     if msg.is_multipart():
         
         for part in msg.get_payload():
             charset = part.get_content_charset()
  
+            # Decode utf-8 for text and html 
             if part.get_content_type() == 'text/plain':
                 text = unicode(part.get_payload(decode=True), str(charset), "ignore").encode('utf8', 'replace')
             if part.get_content_type() == 'text/html':
@@ -166,8 +168,6 @@ def get_email_by_msgID(open_connect, inbox, msg_id):
         for part in email_message.get_payload():
             if part.get_content_maintype() == "text":
                 email_body = part.get_payload()
-            #elif part.get_content_type() == "text/html":
-                #email_body = part.get_payload()
     else:
         email_body = email_message.get_payload()
 
