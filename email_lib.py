@@ -47,6 +47,7 @@ def list_subfolders(open_connect, inbox):
 
 def list_email_parts(open_connect, inbox, msg_id):
     ''' Display different parts of the email '''
+    
     open_connect.select(inbox, readonly=True)
     result,data = open_connect.fetch(msg_id, '(RFC822)')
     raw_email = data[0][1]
@@ -116,16 +117,15 @@ def get_decoded_email_body(message_body):
     
     msg = email.message_from_string(message_body)
     text = ""
+    html = None
 
     if msg.is_multipart():
-        html = None
         
         for part in msg.get_payload():
             charset = part.get_content_charset()
  
             if part.get_content_type() == 'text/plain':
                 text = unicode(part.get_payload(decode=True), str(charset), "ignore").encode('utf8', 'replace')
- 
             if part.get_content_type() == 'text/html':
                 html = unicode(part.get_payload(decode=True), str(charset), "ignore").encode('utf8', 'replace')
  
@@ -139,6 +139,7 @@ def get_decoded_email_body(message_body):
 
 def get_email_by_msgID(open_connect, inbox, msg_id):
     ''' Get email by msgID '''
+    
     email_header=''
     open_connect.select(inbox, readonly=True)
     result,data = open_connect.fetch(msg_id, '(RFC822)')
@@ -163,10 +164,10 @@ def get_email_by_msgID(open_connect, inbox, msg_id):
     
     if email_message.is_multipart():
         for part in email_message.get_payload():
-            if part.get_content_type() == "text/plain":
+            if part.get_content_maintype() == "text":
                 email_body = part.get_payload()
-            elif part.get_content_type() == "text/html":
-                email_body = part.get_payload()
+            #elif part.get_content_type() == "text/html":
+                #email_body = part.get_payload()
     else:
         email_body = email_message.get_payload()
 
